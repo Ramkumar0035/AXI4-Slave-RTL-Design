@@ -1,178 +1,220 @@
 # AXI4 Full Slave RTL Design and Verification
 
-## Overview
-
-This project implements a configurable **AXI4 Full Slave** compliant with the ARM AMBA AXI4 protocol. The RTL is developed in Verilog/SystemVerilog using a modular architecture and verified through a self-checking SystemVerilog testbench.
-
-The project was developed as part of the **Samsung PRISM** worklet and serves as a foundation for future AXI4 Verification IP (VIP) development.
+> A configurable and modular AXI4 Full Slave RTL implementation developed in SystemVerilog with functional verification using a self-checking testbench.
 
 ---
 
-## Features
+## Project Overview
 
-### Implemented
+This project implements an **AXI4 Full Slave** compliant with the ARM AMBA AXI4 protocol specification.
 
-- AXI4 Full Slave RTL
-- Five AXI4 Channels
-  - Write Address (AW)
-  - Write Data (W)
-  - Write Response (B)
-  - Read Address (AR)
-  - Read Data (R)
-- Single Read/Write Transactions
+The design follows a modular RTL architecture and supports all five AXI4 channels, burst transfers, transaction buffering, address generation, and protocol response handling. Functional verification is performed using a directed SystemVerilog testbench with ModelSim waveform analysis.
+
+The project was developed as part of the **Samsung PRISM** worklet and serves as a foundation for future **AXI4 Verification IP (VIP)** development.
+
+---
+
+# Architecture
+
+```
+                    AXI MASTER
+                         │
+         ┌───────────────┴───────────────┐
+         │                               │
+     Write Channel                  Read Channel
+         │                               │
+         ▼                               ▼
+  axi_write_controller          axi_read_controller
+         │                               │
+         ├──────────────┬────────────────┤
+         ▼              ▼
+  axi_transaction_fifo  axi_addr_gen
+               │
+               ▼
+            axi_mem
+               │
+               ▼
+        axi_resp_gen
+```
+
+---
+
+# Repository Structure
+
+```
+AXI4_SLAVE_RTL
+│
+├── rtl/
+├── tb/
+├── docs/
+├── sim/
+├── waveforms/
+│
+├── README.md
+├── CHANGELOG.md
+├── LICENSE
+├── CONTRIBUTING.md
+└── .gitignore
+```
+
+---
+
+# RTL Modules
+
+| Module | Description |
+|---------|-------------|
+| axi_slave_top | Top-level AXI4 Slave |
+| axi_write_controller | Write transaction controller |
+| axi_read_controller | Read transaction controller |
+| axi_transaction_fifo | Transaction buffering |
+| axi_mem | Internal memory |
+| axi_addr_gen | Burst address generator |
+| axi_alignment_checker | Alignment verification |
+| axi_boundary_checker | Boundary verification |
+| axi_resp_gen | Response generation |
+| axi_id_tracker | Transaction ID handling |
+| axi_write_fsm | Write channel state machine |
+| axi_read_fsm | Read channel state machine |
+
+---
+
+# Supported Features
+
+### AXI Channels
+
+- Write Address (AW)
+- Write Data (W)
+- Write Response (B)
+- Read Address (AR)
+- Read Data (R)
+
+### Transactions
+
+- Single Write
+- Single Read
+- Burst Write
+- Burst Read
+
+### Burst Types
+
 - FIXED Burst
 - INCR Burst
 - WRAP Burst
-- Burst Address Generation
+
+### Protocol Features
+
+- VALID / READY Handshake
 - Transaction FIFO
+- Burst Address Generation
 - Transaction ID Handling
-- Internal Memory
+- Multiple Outstanding Transactions
+- Concurrent Read and Write
+- Backpressure Handling
 - Address Alignment Checking
 - Burst Boundary Checking
 - Response Generation
-- Multiple Outstanding Transactions
-- Concurrent Read and Write Support
-- Backpressure Handling
-- Parameterized RTL Modules
 
 ---
 
-## Verification
+# Verification
 
-The RTL has been verified using a directed SystemVerilog testbench.
+The RTL has been functionally verified using a SystemVerilog self-checking testbench.
 
-Verified scenarios include:
+Verified functionality includes:
 
-- Reset Verification
+- Reset
 - Single Write
 - Single Read
 - FIXED Burst
 - INCR Burst
 - WRAP Burst
 - Multiple Address Transactions
-- Concurrent Read/Write
+- Concurrent Read / Write
 - Transaction ID Handling
 - Multiple Outstanding Transactions
 - Backpressure Handling
 
-Simulation was performed using **ModelSim**, and protocol behavior was validated through waveform analysis.
+Simulation Tool:
+
+- ModelSim
 
 ---
 
-## Project Structure
+# Documentation
 
-```
-AXI4-Full-Slave/
-│
-├── rtl/
-│   ├── axi_slave_top.sv
-│   ├── axi_write_controller.sv
-│   ├── axi_read_controller.sv
-│   ├── axi_transaction_fifo.sv
-│   ├── axi_addr_gen.sv
-│   ├── axi_mem.sv
-│   ├── axi_alignment_checker.sv
-│   ├── axi_boundary_checker.sv
-│   ├── axi_resp_gen.sv
-│   ├── axi_id_tracker.sv
-│   ├── axi_write_fsm.sv
-│   └── axi_read_fsm.sv
-│
-├── tb/
-│   └── tb_axi_slave_smoke.sv
-│
-├── docs/
-│
-├── waveforms/
-│
-└── README.md
-```
+Complete project documentation is available in the `docs/` directory.
+
+| Document |
+|----------|
+| Project Overview |
+| AXI4 Protocol |
+| System Architecture |
+| RTL Architecture |
+| RTL Module Description |
+| Address Generation |
+| Verification Methodology |
+| Test Cases |
+| Waveform Analysis |
+| Supported Features |
+| Current Limitations |
+| Future Work |
 
 ---
 
-## Supported Burst Types
+# Development Status
 
-| Burst Type | Status |
-|------------|--------|
-| FIXED | ✓ |
-| INCR | ✓ |
-| WRAP | ✓ |
-
----
-
-## Supported Features
-
-| Feature | Status |
-|----------|--------|
-| Single Read | ✓ |
-| Single Write | ✓ |
-| Burst Read | ✓ |
-| Burst Write | ✓ |
-| Transaction FIFO | ✓ |
-| Transaction ID | ✓ |
-| Multiple Outstanding Transactions | ✓ |
-| Backpressure | ✓ |
+| Component | Status |
+|-----------|--------|
+| RTL Design | ✅ Complete |
+| Functional Verification | ✅ Complete |
+| Documentation | ✅ Complete |
+| Directed Testbench | ✅ Complete |
+| Waveform Verification | ✅ Complete |
+| UVM Verification | 🔄 Planned |
+| AXI4 VIP | 🔄 Planned |
 
 ---
 
-## Documentation
+# Future Roadmap
 
-Project documentation includes:
+## Version 2.0
 
-- Project Overview
-- AXI4 Protocol Overview
-- System Architecture
-- RTL Architecture
-- RTL Module Description
-- Address Generation
-- Verification Methodology
-- Test Cases
-- Waveform Analysis
-- Supported Features
-- Current Limitations
-- Future Work
+- Enhanced protocol verification
+- Additional corner-case testing
+- Improved verification automation
 
----
+## Version 3.0
 
-## Future Enhancements
+- UVM Environment
+- Master Agent
+- Slave Agent
+- Driver
+- Monitor
+- Sequencer
+- Scoreboard
 
-Planned developments include:
+## Version 4.0
 
-- AXI4 Master RTL
-- UVM-Based Verification Environment
-- AXI4 Verification IP (VIP)
-- Protocol Assertions (SVA)
+- Complete AXI4 Verification IP
 - Functional Coverage
-- Constrained-Random Verification
-- Regression Automation
+- SystemVerilog Assertions
+- Regression Framework
 - Performance Analysis
 
 ---
 
-## Development Status
+# Tools
 
-**Current Version:** v1.0
-
-Status:
-
-- RTL Design: Complete
-- Functional Verification: Complete
-- Documentation: Complete
-- UVM Verification: Planned
-- AXI4 VIP Development: Planned
-
----
-
-## Tools Used
-
-- Verilog
 - SystemVerilog
+- Verilog
 - ModelSim
 - Git
 - GitHub
 
 ---
 
-## License
+# License
 
 This project is intended for educational, research, and learning purposes.
+
+See the LICENSE file for details.
