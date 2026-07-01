@@ -1,0 +1,31 @@
+# ModelSim
+transcript
+vsim.wlf
+work/
+*.wlf
+*.log
+
+# Simulation Outputs
+*.vcd
+*.vpd
+*.fsdb
+*.jou
+
+# Temporary Files
+*.tmp
+*.bak
+
+# Editor
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Coverage
+coverage/
+covhtmlreport/
+
+# Waveforms (optional)
+*.wcfg
